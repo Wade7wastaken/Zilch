@@ -1,3 +1,5 @@
+const average = (array) => array.reduce((a, b) => a + b) / array.length;
+
 function randInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max) + 1;
@@ -29,7 +31,6 @@ function score(s) {
 		state.push(el);
 	});
 	state.sort();
-	//console.log(state);
 
 	const freq = [
 		state.filter((x) => x === 1).length,
@@ -42,9 +43,9 @@ function score(s) {
 
 	if (state.length == 6) {
 		if (test1to6(state)) {
-			return 1500;
+			return [1500, []];
 		} else if (testpairs(state, freq)) {
-			return 1000;
+			return [1000, []];
 		}
 	}
 
@@ -77,18 +78,31 @@ function score(s) {
 	return [total, state];
 }
 
-const list = [];
+function zilchPercentage(numDice) {
+	let total = 0;
+	let successes = 0;
 
-for (let i = 0; i < 1000000; i++) {
-	const state = [
-		randInt(1, 6),
-		randInt(1, 6),
-		randInt(1, 6),
-		randInt(1, 6),
-		randInt(1, 6),
-		randInt(1, 6),
-	];
-	list.push(score(state));
+	for (let i = 0; i < 10000000; i++) {
+		let state = [];
+
+		for (let i = 0; i < numDice; i++) {
+			state.push(randInt(1, 6));
+		}
+
+		if (score(state)[0] !== 0) successes++;
+		total++;
+
+		/*if (i % 1000 === 0) {
+			console.log(successes / total);
+		}*/
+	}
+
+	console.log(successes / total);
 }
 
-console.log(list.reduce((a, b) => a + b) / list.length);
+zilchPercentage(1);
+zilchPercentage(2);
+zilchPercentage(3);
+zilchPercentage(4);
+zilchPercentage(5);
+zilchPercentage(6);
