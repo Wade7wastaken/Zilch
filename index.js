@@ -17,7 +17,7 @@ function test1to6(state) {
 	);
 }
 
-function testpairs(state, freq) {
+function testpairs(freq) {
 	return freq.filter((x) => x === 2).length === 3;
 }
 
@@ -78,31 +78,48 @@ function score(s) {
 	return [total, state];
 }
 
-function zilchPercentage(numDice) {
-	let total = 0;
-	let successes = 0;
+const really_big_number = 10000000;
 
-	for (let i = 0; i < 10000000; i++) {
-		let state = [];
+function averageScore(numDice) {
+	const scores = [];
+	for (let i = 0; i < really_big_number; i++) {
+		const state = [];
 
-		for (let i = 0; i < numDice; i++) {
+		for (let j = 0; j < numDice; j++) {
 			state.push(randInt(1, 6));
 		}
 
-		if (score(state)[0] !== 0) successes++;
-		total++;
-
-		/*if (i % 1000 === 0) {
-			console.log(successes / total);
-		}*/
+		scores.push(score(state)[0]);
 	}
-
-	console.log(successes / total);
+	return average(scores);
 }
 
-zilchPercentage(1);
-zilchPercentage(2);
-zilchPercentage(3);
-zilchPercentage(4);
-zilchPercentage(5);
-zilchPercentage(6);
+function zilchProbability(numDice) {
+	let total = 0;
+	let zilches = 0;
+
+	for (let i = 0; i < 10000000; i++) {
+		const state = [];
+
+		for (let j = 0; j < numDice; j++) {
+			state.push(randInt(1, 6));
+		}
+
+		if (score(state)[0] === 0) zilches++;
+		total++;
+	}
+
+	return zilches / total;
+}
+
+console.log("Zilch Probability for x dice:");
+for (let i = 1; i <= 6; i++) {
+	console.log(`${i}: ${zilchProbability(i)}`);
+}
+
+console.log("");
+
+console.log("Average score for x dice:");
+for (let i = 1; i <= 6; i++) {
+	console.log(`${i}: ${averageScore(i)} points`);
+}
