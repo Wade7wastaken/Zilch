@@ -1,19 +1,26 @@
 {
-  "name": "zilch",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Wade7wastaken/Zilch.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Wade7wastaken/Zilch/issues"
-  },
-  "homepage": "https://github.com/Wade7wastaken/Zilch#readme"
+	"name": "typescript",
+	"version": "1.0.0",
+	"description": "A TypeScript template.",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"start": "node out/app.js",
+		"prestart": "npm run build",
+		"build": "tsc"
+	},
+	"author": "Wade7",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/node": "^20.4.2",
+		"@typescript-eslint/eslint-plugin": "^6.0.0",
+		"@typescript-eslint/parser": "^6.0.0",
+		"eslint": "^8.45.0",
+		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-unicorn": "^48.0.0",
+		"prettier": "^3.0.0",
+		"typescript": "^5.1.6"
+	}
 }
+
