@@ -12,14 +12,13 @@ function test1To6(state: DiceState): number {
 	if (state.length !== 6) return 0;
 	// if there's 1-6, return 1500 points and an empty state
 	// else return 0 and whatever state was passed
-	return state[0] === 1 &&
-		state[1] === 2 &&
-		state[2] === 3 &&
-		state[3] === 4 &&
-		state[4] === 5 &&
-		state[5] === 6
-		? 1500
-		: 0;
+
+	let i = 6;
+	while (i--) {
+		if (!state.includes(i)) return 0;
+	}
+
+	return 1500;
 }
 
 function testPairs(state: DiceState, freq: number[]): number {
@@ -61,8 +60,6 @@ function testNumber(state: DiceState, num: number, value: number): number {
 }
 
 function score(state: DiceState): number {
-	state.sort();
-
 	const freq = generateFreq(state);
 
 	return (

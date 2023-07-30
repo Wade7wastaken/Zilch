@@ -5,9 +5,9 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"start": "node out/app.js",
+		"run": "node ./out/index.js",
 		"prestart": "npm run build",
-		"build": "tsc",
+		"build": "tsc && uglifyjs-folder ./out -e -x .js -o ./out",
 		"lint": "eslint .",
 		"prettier:write": "prettier --write ./src"
 	},
@@ -22,6 +22,7 @@
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-unicorn": "^48.0.0",
 		"prettier": "^3.0.0",
-		"typescript": "^5.1.6"
+		"typescript": "^5.1.6",
+		"uglifyjs-folder": "^3.3.0"
 	}
 }
