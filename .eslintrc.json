@@ -46,6 +46,7 @@
 		],
 
 		// Unicorn Rules
+		"unicorn/prevent-abbreviations": "off",
 		"unicorn/filename-case": [
 			"error",
 			{

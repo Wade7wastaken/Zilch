@@ -1,87 +1,98 @@
-const average = (array) => array.reduce((a, b) => a + b) / array.length;
+import { removeValueFromArray, average, generateFreq } from "./arrayUtils.js";
 
-function randInt(min, max) {
+type DiceState = number[];
+
+function randInt(min: number, max: number): number {
 	min = Math.ceil(min);
-	max = Math.floor(max) + 1;
-	return Math.floor(Math.random() * (max - min) + min);
+	return Math.floor(Math.random() * (Math.floor(max) + 1 - min) + min);
 }
 
-function test1to6(state) {
-	return (
-		state[0] == 1 &&
-		state[1] == 2 &&
-		state[2] == 3 &&
-		state[3] == 4 &&
-		state[4] == 5 &&
-		state[5] == 6
-	);
+// tests
+function test1To6(state: DiceState): number {
+	if (state.length !== 6) return 0;
+	// if there's 1-6, return 1500 points and an empty state
+	// else return 0 and whatever state was passed
+	return state[0] === 1 &&
+		state[1] === 2 &&
+		state[2] === 3 &&
+		state[3] === 4 &&
+		state[4] === 5 &&
+		state[5] === 6
+		? 1500
+		: 0;
 }
 
-function testpairs(freq) {
-	return freq.filter((x) => x === 2).length === 3;
+function testPairs(state: DiceState, freq: number[]): number {
+	if (state.length !== 6) return 0;
+
+	return freq.filter((x) => x === 2).length === 3 ? 1000 : 0;
 }
 
-/**
- *
- * @param {Array<number>} s
- */
-function score(s) {
-	let state = [];
-	s.forEach((el) => {
-		state.push(el);
-	});
-	state.sort();
-
-	const freq = [
-		state.filter((x) => x === 1).length,
-		state.filter((x) => x === 2).length,
-		state.filter((x) => x === 3).length,
-		state.filter((x) => x === 4).length,
-		state.filter((x) => x === 5).length,
-		state.filter((x) => x === 6).length,
-	];
-
-	if (state.length == 6) {
-		if (test1to6(state)) {
-			return [1500, []];
-		} else if (testpairs(state, freq)) {
-			return [1000, []];
-		}
-	}
+function test3OfAKind(state: DiceState, freq: number[]): number {
+	if (state.length < 3) return 0;
 
 	let total = 0;
 
-	for (const [v, frequency] of freq.entries()) {
-		const value = v + 1;
+	for (const [index, frequency] of freq.entries()) {
+		const diceValue = index + 1;
 		if (frequency >= 3) {
-			let basevalue = value * 100;
-			if (value === 1) {
-				basevalue = 1000;
-			}
-			total += basevalue * (frequency - 2);
-			state.splice(state.indexOf(value), 1);
-			state.splice(state.indexOf(value), 1);
-			state.splice(state.indexOf(value), 1);
+			let baseValue = diceValue * 100;
+			if (diceValue === 1) baseValue = 1000;
+
+			for (let i = 0; i < frequency; i++)
+				removeValueFromArray(state, diceValue);
+
+			total += baseValue * (frequency - 2);
 		}
 	}
 
-	while (state.includes(1)) {
-		state.splice(state.indexOf(1), 1);
-		total += 100;
-	}
-
-	while (state.includes(5)) {
-		state.splice(state.indexOf(1), 1);
-		total += 50;
-	}
-
-	return [total, state];
+	return total;
 }
 
-const really_big_number = 10000000;
+function testNumber(state: DiceState, num: number, value: number): number {
+	let score = 0;
 
-function averageScore(numDice) {
-	const scores = [];
+	while (state.includes(num)) {
+		removeValueFromArray(state, num);
+		score += value;
+	}
+
+	return score;
+}
+
+function score(state: DiceState): number {
+	state.sort();
+
+	const freq = generateFreq(state);
+
+	return (
+		test1To6(state) +
+		testPairs(state, freq) +
+		test3OfAKind(state, freq) +
+		testNumber(state, 1, 100) +
+		testNumber(state, 5, 50)
+	);
+}
+
+const really_big_number = 1_000_000;
+
+function averageScore(numDice: number): number {
+	const scores: number[] = [];
+	for (let i = 0; i < really_big_number; i++) {
+		const state = [];
+
+		for (let dice = 0; dice < numDice; dice++) {
+			state.push(randInt(1, 6));
+		}
+
+		scores.push(score(state));
+	}
+	return average(scores);
+}
+
+function zilchProbability(numDice: number): number {
+	let zilches = 0;
+
 	for (let i = 0; i < really_big_number; i++) {
 		const state = [];
 
@@ -89,29 +100,13 @@ function averageScore(numDice) {
 			state.push(randInt(1, 6));
 		}
 
-		scores.push(score(state)[0]);
-	}
-	return average(scores);
-}
-
-function zilchProbability(numDice) {
-	let total = 0;
-	let zilches = 0;
-
-	for (let i = 0; i < 10000000; i++) {
-		const state = [];
-
-		for (let j = 0; j < numDice; j++) {
-			state.push(randInt(1, 6));
-		}
-
-		if (score(state)[0] === 0) zilches++;
-		total++;
+		if (score(state) === 0) zilches++;
 	}
 
-	return zilches / total;
+	return zilches / really_big_number;
 }
 
+const start = performance.now();
 console.log("Zilch Probability for x dice:");
 for (let i = 1; i <= 6; i++) {
 	console.log(`${i}: ${zilchProbability(i)}`);
@@ -123,3 +118,6 @@ console.log("Average score for x dice:");
 for (let i = 1; i <= 6; i++) {
 	console.log(`${i}: ${averageScore(i)} points`);
 }
+const end = performance.now();
+
+console.log(`Final time: ${end - start}`);
