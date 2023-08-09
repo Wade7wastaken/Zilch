@@ -5,11 +5,12 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"run": "node ./out/index.js",
+		"start": "node out/index.js",
 		"prestart": "npm run build",
-		"build": "tsc && uglifyjs-folder ./out -e -x .js -o ./out",
+		"build": "tsc",
 		"lint": "eslint .",
-		"prettier:write": "prettier --write ./src"
+		"prettier:write": "prettier --write ./src",
+		"minify": "uglifyjs-folder ./out -e -x .js -o ./out"
 	},
 	"author": "Wade7",
 	"license": "ISC",
@@ -18,7 +19,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"eslint": "^8.45.0",
-		"eslint-config-prettier": "^8.8.0",
+		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-unicorn": "^48.0.0",
 		"prettier": "^3.0.0",

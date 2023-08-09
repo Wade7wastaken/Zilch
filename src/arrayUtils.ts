@@ -9,17 +9,3 @@ export function generateFreq(state: number[]): number[] {
 	}
 	return freq;
 }
-
-export function removeValueFromArray(
-	array: number[],
-	valueToRemove: number
-): number[] {
-	const index = array.indexOf(valueToRemove);
-
-	if (index === -1) {
-		throw new Error(`Value ${valueToRemove} not found in array`);
-	}
-
-	array.splice(index, 1);
-	return array;
-}
